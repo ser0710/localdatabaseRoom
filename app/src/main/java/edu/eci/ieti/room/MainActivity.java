@@ -10,6 +10,8 @@ import android.os.ConditionVariable;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -24,18 +26,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this;
         AppDatabase db = AppDatabase.getInstance(context);
-        User user = new User();
-        user.firstName = "HOLA";
-        user.lastName = "ADIOS";
+//        User user = new User();
+//        user.firstName = "HOLA";
+//        user.lastName = "ADIOS";
         UserDao userDao = db.userDao();
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                userDao.insert(user);
+//                userDao.insert(user);
                 TextView textView = findViewById(R.id.lastNameTextView);
-                textView.setText(userDao.findLastNameByName("HOLA").lastName);
-                Log.d("MainActivity", userDao.findLastNameByName("HOLA").lastName);
+                List<User> users = userDao.getAll();
+                Random random = new Random();
+                int randomIndex = random.nextInt(users.size());
+                String firstName = users.get(randomIndex).firstName;
+                String lastName = users.get(randomIndex).lastName;
+                String put = firstName + " " + lastName;
+                textView.setText(put);
             }
         });
 
